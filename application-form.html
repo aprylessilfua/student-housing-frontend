@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Apply for Housing | Student Housing</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <header>
+    <h1>Apply for Housing</h1>
+    <nav class="navbar">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="applications.html">My Applications</a>
+    </nav>
+  </header>
+
+  <main>
+    <form id="application-form" class="form">
+      <label>
+        Select Room
+        <select id="room-select"></select>
+      </label>
+      <label>
+        Preference / Notes
+        <textarea id="notes" rows="4"></textarea>
+      </label>
+      <button type="submit">Submit Application</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>© 2025 Student Housing System</p>
+  </footer>
+
+  <script>
+    // basic JS to populate room dropdown and handle submit
+    document.addEventListener('DOMContentLoaded', async () => {
+      const res = await fetch(`${BACKEND_URL}/api/rooms`);
+      const rooms = await res.json();
+      const sel = document.getElementById('room-select');
+      rooms.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.id;
+        opt.text = `${r.name} – ${r.occupancy_limit} ppl max`;
+        sel.appendChild(opt);
+      });
+      document.getElementById('application-form')
+        .addEventListener('submit', async e => {
+          e.preventDefault();
+          const userId = Number(localStorage.getItem('userId'));
+          const roomId = Number(sel.value);
+          const notes  = document.getElementById('notes').value.trim();
+          await submitApplication(userId, roomId, notes);
+          window.location.href = 'applications.html';
+        });
+    });
+  </script>
+  <script src="app.js" defer></script>
+</body>
+</html>

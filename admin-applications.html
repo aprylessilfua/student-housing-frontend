@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin — Applications</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <header>
+    <h1>Manage Applications</h1>
+    <nav class="navbar">
+      <a href="index.html">Front End</a>
+      <a href="admin.html">Admin Home</a>
+      <a href="admin-hostels.html">Hostels</a>
+      <a href="admin-rooms.html">Rooms</a>
+      <a href="admin-students.html">Students</a>
+      <a href="admin-applications.html" class="active">Applications</a>
+      <a href="admin-notifications.html">Notifications</a>
+      <a href="#" id="logout-link">Logout</a>
+    </nav>
+  </header>
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>User ID</th><th>Room ID</th><th>Status</th><th>Applied At</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="applications-table-body"></tbody>
+    </table>
+  </main>
+  <footer><p>© 2025 Student Housing System</p></footer>
+  <script src="admin.js" defer></script>
+</body>
+</html>

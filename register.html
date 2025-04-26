@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Register | Student Housing</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <header>
+    <h1>Register</h1>
+    <nav class="navbar">
+      <a href="index.html">Home</a>
+      <a href="rooms.html">Rooms</a>
+      <a href="hostels.html">Hostels</a>
+      <a href="applications.html">My Applications</a>
+      <a href="login.html">Login</a>
+      <a href="register.html" class="active">Register</a>
+      <a href="admin.html">Admin Dashboard</a>
+    </nav>
+  </header>
+  <main>
+    <form id="register-form">
+      <label>Username:<input type="text" id="name" required/></label>
+      <label>Email:<input type="email" id="email" required/></label>
+      <label>Phone:<input type="tel" id="phone" required/></label>
+      <label>Password:<input type="password" id="password" required/></label>
+      <label>Confirm:<input type="password" id="confirm-password" required/></label>
+      <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="login.html">Login</a></p>
+  </main>
+  <footer><p>© 2025 Student Housing System</p></footer>
+  <script src="app.js" defer></script>
+</body>
+</html>

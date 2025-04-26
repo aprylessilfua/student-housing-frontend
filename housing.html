@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Housing Application</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Apply for Housing</h1>
+        <nav>
+            <ul class="navbar">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Available Housing Options</h2>
+        <ul id="housing-list">
+            <!-- Housing options will be dynamically populated -->
+        </ul>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Student Housing System</p>
+    </footer>
+
+    <script>
+        async function fetchHousingOptions() {
+            try {
+                const response = await fetch('/api/housing');
+                const housingOptions = await response.json();
+
+                const housingList = document.getElementById('housing-list');
+                housingOptions.forEach((option) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${option.name} - ${option.location}`;
+                    housingList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error fetching housing options:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchHousingOptions);
+    </script>
+</body>
+</html>

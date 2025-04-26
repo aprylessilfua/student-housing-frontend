@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Student Housing</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    #search-form {
+      display: flex; flex-wrap: wrap; gap:1rem; align-items:flex-end; margin-bottom:2rem;
+    }
+    #search-form label { display:flex; flex-direction:column; }
+    #search-form button { height:2.5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Student Housing</h1>
+    <nav class="navbar">
+      <a href="index.html" class="active">Home</a>
+      <a href="rooms.html">Rooms</a>
+      <a href="hostels.html">Hostels</a>
+      <a href="applications.html">My Applications</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+  <main>
+    <form id="search-form">
+      <label>Search:<input type="text" id="search-input" placeholder="…"/></label>
+      <button type="button" id="search-button">Search</button>
+      <button type="button" id="clear-search-button">Clear</button>
+    </form>
+    <section>
+      <h2>Available Hostels</h2>
+      <ul id="hostels-list"></ul>
+    </section>
+    <section>
+      <h2>Available Rooms</h2>
+      <ul id="rooms-list"></ul>
+    </section>
+  </main>
+  <footer>
+    <p>© 2025 Student Housing System</p>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>
