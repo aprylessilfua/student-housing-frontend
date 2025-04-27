@@ -1,8 +1,8 @@
 // admin.js
 
 // Change this to your new Render backend URL if needed
-const BACKEND_URL = 'https://student-housing-backend.onrender.com';
-
+//const BACKEND_URL = 'https://student-housing-backend.onrender.com';
+const BACKEND_URL = 'https://student-hostel-backend-bd96.onrender.com';
 /**
  * Admin Auth Link
  * - Uses a separate 'adminToken' key in localStorage
