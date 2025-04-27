@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard | Student Housing</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
   <header>
@@ -16,52 +16,11 @@
       <a href="admin-students.html">Students</a>
       <a href="admin-applications.html">Applications</a>
       <a href="admin-notifications.html">Notifications</a>
-      <a href="#" id="auth-button">Logout</a>
+      <a href="#" id="admin-auth-link"></a>
     </nav>
   </header>
-
-  <main>
-    <p>Use the menu above to manage the system.</p>
-  </main>
-  <footer>
-    <p>© 2025 Student Housing System</p>
-  </footer>
-  <script>
-    // Check authentication state
-    const authButton = document.getElementById("auth-button");
-
-    function checkAuth() {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn === "true") {
-        // User is logged in
-        authButton.textContent = "Logout";
-      } else {
-        // User is not logged in
-        authButton.textContent = "Login";
-        // Redirect to login page if on admin.html
-        if (window.location.pathname.includes("admin.html")) {
-          window.location.href = "login.html";
-        }
-      }
-    }
-
-    // Handle login/logout button click
-    authButton.addEventListener("click", () => {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn === "true") {
-        // Perform logout
-        localStorage.setItem("isLoggedIn", "false");
-        alert("You have been logged out.");
-        authButton.textContent = "Login";
-        window.location.href = "login.html";
-      } else {
-        // Redirect to login page
-        window.location.href = "login.html";
-      }
-    });
-
-    // Run auth check on page load
-    checkAuth();
-  </script>
+  <main><p>Select a section above to manage the system.</p></main>
+  <footer>© 2025 Student Housing System</footer>
+  <script src="admin.js" defer></script>
 </body>
 </html>
