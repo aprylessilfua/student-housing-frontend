@@ -1,70 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Dashboard | Student Housing</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Student Housing</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* (keep the same styles you already had for columns, cards & modal) */
+    body{margin:0;font-family:Arial,sans-serif;}
+    header,footer{background:#2e86de;color:#fff;text-align:center;padding:1rem;}
+    .navbar{display:flex;justify-content:center;gap:1rem;background:#1e6ab9;padding:0.5rem;}
+    .navbar a{color:#fff;text-decoration:none;padding:0.5rem 1rem;border-radius:4px;}
+    .navbar a.active,.navbar a:hover{background:#155a9c;}
+    main{padding:1rem;}
+    #search-form{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;align-items:flex-end;}
+    #search-form label{display:flex;flex-direction:column;font-size:0.9rem;}
+    #search-form button{padding:0.5rem 1rem;cursor:pointer;}
+    .hostels-container{display:flex;flex-wrap:wrap;gap:1rem;}
+    .hostel-column{flex:1 1 300px;border:1px solid #ddd;border-radius:5px;background:#fafafa;padding:1rem;display:flex;flex-direction:column;}
+    .rooms-list{margin-top:1rem;}
+    .room-card{border:1px solid #ccc;border-radius:5px;background:#fff;padding:0.5rem;margin-bottom:0.5rem;}
+    .room-card h4{margin:0 0 0.25rem;font-size:1rem;}
+    .room-card p{margin:0.25rem 0;font-size:0.9rem;}
+    .room-card button{margin-right:0.5rem;padding:0.25rem 0.5rem;font-size:0.8rem;cursor:pointer;}
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;z-index:1000;}
+    .modal.active{display:flex;}
+    .modal img{max-width:90%;max-height:90%;border:4px solid #fff;border-radius:5px;}
+    #modal-close{position:absolute;top:1rem;right:1rem;background:#fff;border:none;font-size:1.5rem;line-height:1;width:2rem;height:2rem;border-radius:50%;cursor:pointer;}
+  </style>
 </head>
 <body>
   <header>
-    <h1>Student Dashboard</h1>
+    <h1>Student Housing</h1>
     <nav class="navbar">
       <a href="index.html" class="active">Home</a>
       <a href="rooms.html">Rooms</a>
       <a href="hostels.html">Hostels</a>
       <a href="applications.html">My Applications</a>
       <a href="dashboard.html">Dashboard</a>
-      <a href="#" id="auth-button">Logout</a>
+      <a href="#" id="auth-link"></a>
     </nav>
   </header>
 
   <main>
-    <section>
-      <h2>Welcome to the Student Housing Portal</h2>
-      <p>Find your perfect room and manage your applications with ease.</p>
-    </section>
+    <form id="search-form">
+      <label>Location<input type="text" id="search-location" placeholder="e.g. Nairobi"></label>
+      <label>Amenities<input type="text" id="search-amenities" placeholder="WiFi, Pool …"></label>
+      <label>Min Price<input type="number" id="search-min-price" placeholder="USD"></label>
+      <label>Max Price<input type="number" id="search-max-price" placeholder="USD"></label>
+      <label>Max Occupancy<input type="number" id="search-max-occupancy" placeholder="#"></label>
+      <button type="button" id="search-button">Filter</button>
+      <button type="button" id="clear-search-button">Clear</button>
+    </form>
+
+    <div class="hostels-container" id="hostels-container"></div>
   </main>
 
-  <footer>
-    <p>© 2025 Student Housing System</p>
-  </footer>
-  <script>
-    // Check authentication state
-    const authButton = document.getElementById("auth-button");
+  <!-- Image Modal -->
+  <div id="image-modal" class="modal">
+    <img id="modal-image" src="" alt="Preview">
+    <button id="modal-close">&times;</button>
+  </div>
 
-    function checkAuth() {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn === "true") {
-        // User is logged in
-        authButton.textContent = "Logout";
-      } else {
-        // User is not logged in
-        authButton.textContent = "Login";
-        // Redirect to login page if on a restricted page
-        if (window.location.pathname.includes("dashboard.html")) {
-          window.location.href = "login.html";
-        }
-      }
-    }
-
-    // Handle login/logout button click
-    authButton.addEventListener("click", () => {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn === "true") {
-        // Perform logout
-        localStorage.setItem("isLoggedIn", "false");
-        alert("You have been logged out.");
-        authButton.textContent = "Login";
-        window.location.href = "login.html";
-      } else {
-        // Redirect to login page
-        window.location.href = "login.html";
-      }
-    });
-
-    // Run auth check on page load
-    checkAuth();
-  </script>
+  <footer>© 2025 Student Housing System</footer>
+  <script src="app.js" defer></script>
 </body>
 </html>
