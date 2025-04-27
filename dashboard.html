@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Dashboard</title>
+  <title>Dashboard | Student Housing</title>
   <link rel="stylesheet" href="styles.css"/>
   <style>
-    .stats { display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; }
-    .stat { flex:1 1 120px; text-align:center; }
+    .stats { display:flex; gap:2rem; flex-wrap:wrap; justify-content:center; }
+    .stat  { flex:1 1 120px; text-align:center; }
   </style>
 </head>
 <body>
@@ -14,45 +14,47 @@
     <h1>Dashboard</h1>
     <nav class="navbar">
       <a href="index.html">Home</a>
-      <a href="applications.html">Applications</a>
+      <a href="applications.html">My Applications</a>
       <a href="hostels.html">Hostels</a>
       <a href="rooms.html">Rooms</a>
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="#" id="logout-link">Logout</a>
+      <a href="admin.html">Admin Login</a>
     </nav>
   </header>
   <main>
     <section>
       <h2>Welcome</h2>
-      <p>Name: <span id="student-name">Loading...</span></p>
-      <p>Email: <span id="student-email">Loading...</span></p>
+      <p>Name: <strong id="student-name">Loading…</strong></p>
+      <p>Email: <strong id="student-email">Loading…</strong></p>
     </section>
+
     <section>
       <h2>Your Stats</h2>
       <div class="stats">
         <div class="stat">
-          <h3 id="total-applications">0</h3>
-          <p>Total Applications</p>
+          <h3 id="total-applications">0</h3><p>Total Applications</p>
         </div>
         <div class="stat">
-          <h3 id="pending-applications">0</h3>
-          <p>Pending</p>
+          <h3 id="pending-applications">0</h3><p>Pending</p>
         </div>
         <div class="stat">
-          <h3 id="accepted-applications">0</h3>
-          <p>Accepted</p>
+          <h3 id="accepted-applications">0</h3><p>Accepted</p>
         </div>
         <div class="stat">
-          <h3 id="rejected-applications">0</h3>
-          <p>Rejected</p>
+          <h3 id="rejected-applications">0</h3><p>Rejected</p>
         </div>
       </div>
     </section>
+
     <section>
-      <h2>Available Hostels</h2>
-      <div id="hostels-list">Loading...</div>
+      <h2>Assigned Rooms</h2>
+      <ul id="assigned-rooms-list"><li>Loading…</li></ul>
     </section>
+
     <section>
-      <h2>Recent Activities</h2>
-      <ul id="recent-activities-list"><li>Loading...</li></ul>
+      <h2>Notifications</h2>
+      <ul id="notifications-list"><li>Loading…</li></ul>
     </section>
   </main>
   <footer><p>© 2025 Student Housing System</p></footer>
