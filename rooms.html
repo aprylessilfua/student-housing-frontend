@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rooms | Student Housing</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rooms</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
@@ -15,79 +15,13 @@
       <a href="hostels.html">Hostels</a>
       <a href="applications.html">My Applications</a>
       <a href="dashboard.html">Dashboard</a>
-      <a href="#" id="auth-button">Logout</a>
+      <a href="#" id="auth-link"></a>
     </nav>
   </header>
   <main>
-    <ul id="rooms-list">
-      <!-- Rooms will be dynamically loaded -->
-    </ul>
+    <ul id="rooms-list"></ul>
   </main>
-  <footer>
-    <p>© 2025 Student Housing System</p>
-  </footer>
-  <script>
-    // Check authentication state
-    const authButton = document.getElementById("auth-button");
-
-    function checkAuth() {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn === "true") {
-        // User is logged in
-        authButton.textContent = "Logout";
-      } else {
-        // User is not logged in
-        authButton.textContent = "Login";
-        // Redirect to login page if not logged in
-        if (window.location.pathname.includes("rooms.html")) {
-          window.location.href = "login.html";
-        }
-      }
-    }
-
-    // Handle login/logout button click
-    authButton.addEventListener("click", () => {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn === "true") {
-        // Perform logout
-        localStorage.setItem("isLoggedIn", "false");
-        alert("You have been logged out.");
-        authButton.textContent = "Login";
-        window.location.href = "login.html";
-      } else {
-        // Redirect to login page
-        window.location.href = "login.html";
-      }
-    });
-
-    // Run auth check on page load
-    checkAuth();
-
-    // Function to fetch and display rooms
-    async function loadRooms() {
-      const roomsList = document.getElementById("rooms-list");
-      try {
-        const response = await fetch("/api/rooms"); // Replace with your actual API endpoint
-        const rooms = await response.json();
-        roomsList.innerHTML = rooms
-          .map(
-            (room) => `
-          <li class="room-item">
-            <h3>${room.name}</h3>
-            <p>${room.description}</p>
-            <p>Occupancy: ${room.occupancy}</p>
-            <img src="${room.image}" alt="Room Image" />
-          </li>
-        `
-          )
-          .join("");
-      } catch (error) {
-        roomsList.innerHTML = "<p>Failed to load rooms. Please try again later.</p>";
-      }
-    }
-
-    // Load rooms on page load
-    loadRooms();
-  </script>
+  <footer>© 2025 Student Housing System</footer>
+  <script src="app.js" defer></script>
 </body>
 </html>
