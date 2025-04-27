@@ -6,11 +6,13 @@ const BACKEND_URL = 'https://student-housing-backend.onrender.com';
 function openModal(id)  { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-/** Data caches **/
+/** Data stores **/
 let allHostels = [];
 let allRooms   = [];
+let hostelsToShow = [];
+let roomsToShow   = [];
 
-/** Fetch master data **/
+/** Fetch and cache hostels & rooms **/
 async function fetchMasterData() {
   try {
     const [hRes, rRes] = await Promise.all([
@@ -19,70 +21,52 @@ async function fetchMasterData() {
     ]);
     allHostels = await hRes.json();
     allRooms   = await rRes.json();
+    // initialize filters
+    hostelsToShow = allHostels;
+    roomsToShow   = allRooms;
   } catch (err) {
-    console.error('Error fetching master data:', err);
+    console.error('Error fetching data:', err);
   }
 }
 
-/** Render hostels **/
-function renderHostels(list) {
-  const container = document.getElementById('hostels-list');
+/** Render hostels each with nested rooms **/
+function renderHostelsWithRooms() {
+  const container = document.getElementById('hostels-container');
   container.innerHTML = '';
-  if (!Array.isArray(list) || list.length === 0) {
+  if (!Array.isArray(hostelsToShow) || hostelsToShow.length === 0) {
     container.innerHTML = '<p>No hostels found.</p>';
     return;
   }
-  list.forEach(h => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
+  hostelsToShow.forEach(h => {
+    const col = document.createElement('div');
+    col.className = 'hostel-column';
+    // Nested rooms for this hostel
+    const related = roomsToShow.filter(r => r.hostel_id === h.id);
+    const roomsHTML = related.length
+      ? related.map(r => `
+          <div class="room-card">
+            <h4>${r.name}</h4>
+            <p>Price: $${r.price}</p>
+            <p>Occupancy: ${r.occupancy_limit}</p>
+            <button class="apply-room" data-room-id="${r.id}">Apply</button>
+            ${r.photo_url ? `<button class="view-image" data-image="${r.photo_url}">View</button>` : ''}
+          </div>
+        `).join('')
+      : `<p>No rooms available.</p>`;
+
+    col.innerHTML = `
       <h3>${h.name}</h3>
       ${h.address ? `<p><strong>Address:</strong> ${h.address}</p>` : ''}
       <p>${h.description}</p>
-      <p><strong>Occupancy:</strong> ${h.occupancy_limit}</p>
-      <button class="view-image" data-image="${h.photo_url || ''}">View</button>
+      <div class="rooms-list">${roomsHTML}</div>
     `;
-    if (h.photo_url) {
-      const img = document.createElement('img');
-      img.src = h.photo_url;
-      img.alt = h.name;
-      card.appendChild(img);
-    }
-    container.appendChild(card);
+    container.appendChild(col);
   });
   attachImageHandlers();
+  attachApplyHandlers();
 }
 
-/** Render rooms **/
-function renderRooms(list) {
-  const container = document.getElementById('rooms-list');
-  container.innerHTML = '';
-  if (!Array.isArray(list) || list.length === 0) {
-    container.innerHTML = '<p>No rooms found.</p>';
-    return;
-  }
-  list.forEach(r => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <h3>${r.name}</h3>
-      <p>${r.description}</p>
-      <p><strong>Price:</strong> $${r.price}</p>
-      <p><strong>Occupancy:</strong> ${r.occupancy_limit}</p>
-      <button class="view-image" data-image="${r.photo_url || ''}">View</button>
-    `;
-    if (r.photo_url) {
-      const img = document.createElement('img');
-      img.src = r.photo_url;
-      img.alt = r.name;
-      card.appendChild(img);
-    }
-    container.appendChild(card);
-  });
-  attachImageHandlers();
-}
-
-/** Attach click handlers to all .view-image buttons **/
+/** Attach handlers to “View” buttons **/
 function attachImageHandlers() {
   document.querySelectorAll('.view-image').forEach(btn => {
     btn.onclick = () => {
@@ -94,7 +78,64 @@ function attachImageHandlers() {
   });
 }
 
-/** Close modal on close-button or backdrop click **/
+/** Attach handlers to “Apply” buttons **/
+function attachApplyHandlers() {
+  document.querySelectorAll('.apply-room').forEach(btn => {
+    btn.onclick = async () => {
+      const userId = Number(localStorage.getItem('userId'));
+      if (!userId) {
+        alert('Please log in to apply.');
+        return window.location.href = 'login.html';
+      }
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/applications`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId,
+            room_id: Number(btn.dataset.roomId),
+            status: 'Pending'
+          })
+        });
+        if (!res.ok) throw new Error('Apply failed');
+        alert('Application submitted!');
+      } catch (err) {
+        console.error('Apply error:', err);
+        alert('Failed to apply.');
+      }
+    };
+  });
+}
+
+/** Filter logic **/
+function filterAndRender() {
+  const locQ = document.getElementById('search-location').value.trim().toLowerCase();
+  const amQ  = document.getElementById('search-amenities').value.trim().toLowerCase();
+  const maxP = Number(document.getElementById('search-max-price').value);
+  const maxO = Number(document.getElementById('search-max-occupancy').value);
+
+  hostelsToShow = allHostels.filter(h =>
+    (!locQ || (h.address||'').toLowerCase().includes(locQ)) &&
+    (!amQ  || (h.description||'').toLowerCase().includes(amQ))
+  );
+  roomsToShow = allRooms.filter(r =>
+    (!maxP || r.price <= maxP) &&
+    (!maxO || r.occupancy_limit <= maxO) &&
+    (!amQ  || (r.description||'').toLowerCase().includes(amQ))
+  );
+  renderHostelsWithRooms();
+}
+
+/** Clear filters **/
+function clearFilters() {
+  ['search-location','search-amenities','search-max-price','search-max-occupancy']
+    .forEach(id => document.getElementById(id).value = '');
+  hostelsToShow = allHostels;
+  roomsToShow   = allRooms;
+  renderHostelsWithRooms();
+}
+
+// — Modal close handlers —
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('modal-close').onclick = () => closeModal('image-modal');
   document.getElementById('image-modal').onclick = e => {
@@ -102,45 +143,16 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 });
 
-/** Apply search filters **/
-function filterAndRender() {
-  const locQ = document.getElementById('search-location').value.trim().toLowerCase();
-  const amQ  = document.getElementById('search-amenities').value.trim().toLowerCase();
-  const maxP = Number(document.getElementById('search-max-price').value);
-  const maxO = Number(document.getElementById('search-max-occupancy').value);
-
-  const filteredHostels = allHostels.filter(h =>
-    (!locQ || (h.address||'').toLowerCase().includes(locQ)) &&
-    (!amQ  || (h.description||'').toLowerCase().includes(amQ))
-  );
-  const filteredRooms = allRooms.filter(r =>
-    (!maxP || r.price <= maxP) &&
-    (!maxO || r.occupancy_limit <= maxO) &&
-    (!amQ  || (r.description||'').toLowerCase().includes(amQ))
-  );
-
-  renderHostels(filteredHostels);
-  renderRooms(filteredRooms);
-}
-
-/** Clear filters **/
-function clearFilters() {
-  ['search-location','search-amenities','search-max-price','search-max-occupancy']
-    .forEach(id => document.getElementById(id).value = '');
-  renderHostels(allHostels);
-  renderRooms(allRooms);
-}
-
-/** Initial load & event bindings **/
+// — Init on page load —
 window.addEventListener('DOMContentLoaded', async () => {
+  // Fetch data → render
   await fetchMasterData();
-  renderHostels(allHostels);
-  renderRooms(allRooms);
+  renderHostelsWithRooms();
 
-  document.getElementById('search-button').onclick = filterAndRender;
+  // Bind UI controls
+  document.getElementById('search-button').onclick      = filterAndRender;
   document.getElementById('clear-search-button').onclick = clearFilters;
-
-  document.getElementById('logout-link').onclick = () => {
+  document.getElementById('logout-link').onclick        = () => {
     localStorage.clear();
     window.location.href = 'index.html';
   };
