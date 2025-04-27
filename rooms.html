@@ -1,30 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Rooms | Student Housing</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
   <header>
     <h1>Rooms</h1>
     <nav class="navbar">
       <a href="index.html">Home</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="hostels.html">Hostels</a>
       <a href="rooms.html" class="active">Rooms</a>
+      <a href="hostels.html">Hostels</a>
       <a href="applications.html">My Applications</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="#" id="logout-link">Logout</a>
+      <a href="admin.html">Admin Login</a>
     </nav>
   </header>
   <main>
-    <ul id="rooms-list">
-      <!-- will be populated by app.js → loadRooms() -->
-    </ul>
+    <ul id="rooms-list"></ul>
   </main>
-  <footer>
-    <p>© 2025 Student Housing System</p>
-  </footer>
+  <footer><p>© 2025 Student Housing System</p></footer>
   <script src="app.js" defer></script>
 </body>
 </html>
