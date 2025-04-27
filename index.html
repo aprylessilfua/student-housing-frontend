@@ -1,37 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Student Housing</title>
-  <link rel="stylesheet" href="styles.css"/>
-  <style>
-    #search-form { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2rem; }
-    #search-form label { display:flex; flex-direction:column; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard | Student Housing</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
-    <h1>Student Housing</h1>
+    <h1>Student Dashboard</h1>
     <nav class="navbar">
       <a href="index.html" class="active">Home</a>
       <a href="rooms.html">Rooms</a>
       <a href="hostels.html">Hostels</a>
       <a href="applications.html">My Applications</a>
       <a href="dashboard.html">Dashboard</a>
-      <a href="#" id="logout-link">Logout</a>
-     </nav>
+      <a href="#" id="auth-button">Logout</a>
+    </nav>
   </header>
+
   <main>
-    <form id="search-form">
-      <label>Search:<input type="text" id="search-input" placeholder="…"/></label>
-      <button type="button" id="search-button">Search</button>
-      <button type="button" id="clear-search-button">Clear</button>
-    </form>
-    <section><h2>Available Hostels</h2><ul id="hostels-list"></ul></section>
-    <section><h2>Available Rooms</h2><ul id="rooms-list"></ul></section>
+    <section>
+      <h2>Welcome to the Student Housing Portal</h2>
+      <p>Find your perfect room and manage your applications with ease.</p>
+    </section>
   </main>
-  <footer><p>© 2025 Student Housing System</p></footer>
-  <script src="app.js" defer></script>
+
+  <footer>
+    <p>© 2025 Student Housing System</p>
+  </footer>
+  <script>
+    // Check authentication state
+    const authButton = document.getElementById("auth-button");
+
+    function checkAuth() {
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      if (isLoggedIn === "true") {
+        // User is logged in
+        authButton.textContent = "Logout";
+      } else {
+        // User is not logged in
+        authButton.textContent = "Login";
+        // Redirect to login page if on a restricted page
+        if (window.location.pathname.includes("dashboard.html")) {
+          window.location.href = "login.html";
+        }
+      }
+    }
+
+    // Handle login/logout button click
+    authButton.addEventListener("click", () => {
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      if (isLoggedIn === "true") {
+        // Perform logout
+        localStorage.setItem("isLoggedIn", "false");
+        alert("You have been logged out.");
+        authButton.textContent = "Login";
+        window.location.href = "login.html";
+      } else {
+        // Redirect to login page
+        window.location.href = "login.html";
+      }
+    });
+
+    // Run auth check on page load
+    checkAuth();
+  </script>
 </body>
 </html>
