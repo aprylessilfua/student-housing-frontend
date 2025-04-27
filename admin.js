@@ -167,21 +167,27 @@ async function deleteHostel(id) {
 // ─── Page Initialization ─────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   setupAdminAuthLink();
+  const raw = location.pathname;
+  const page = raw.split('/').pop().toLowerCase();
+  console.log('[admin.js] running on page:', page);
 
-  const page = location.pathname.split('/').pop().toLowerCase();
-  if (page === 'admin-hostels.html') {
+  if (page.includes('hostels')) {
     loadHostelsAdmin();
-
-    document.getElementById('create-hostel-button')
-      ?.addEventListener('click', () => openHostelForm());
-
-    document.getElementById('hostel-form')
-      ?.addEventListener('submit', saveHostel);
-
-    document.getElementById('hostel-form-cancel')
-      ?.addEventListener('click', event => {
-        event.preventDefault();
-        closeModal('hostel-form-modal');
-      });
+    // …wire up hostels form…
+  }
+  if (page.includes('rooms')) {
+    loadRoomsAdmin();
+    // …wire up rooms form…
+  }
+  if (page.includes('students')) {
+    loadStudentsAdmin();
+  }
+  if (page.includes('applications')) {
+    loadApplicationsAdmin();
+  }
+  if (page.includes('notifications')) {
+    loadNotificationsAdmin();
+    document.getElementById('notification-form')
+      ?.addEventListener('submit', sendNotification);
   }
 });
