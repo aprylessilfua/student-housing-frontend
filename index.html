@@ -8,18 +8,14 @@
   <style>
     body { margin:0; font-family:Arial,sans-serif; }
     header, footer {
-      background: #2e86de;
-      color: #fff;
-      text-align: center;
-      padding: 1rem;
+      background:#2e86de; color:#fff; text-align:center; padding:1rem;
     }
     .navbar {
       display:flex; justify-content:center; gap:1rem;
       background:#1e6ab9; padding:0.5rem;
     }
     .navbar a {
-      color:#fff; text-decoration:none; padding:0.5rem;
-      border-radius:4px;
+      color:#fff; text-decoration:none; padding:0.5rem; border-radius:4px;
     }
     .navbar a.active, .navbar a:hover {
       background:#155a9c;
@@ -38,20 +34,20 @@
       padding:0.5rem 1rem; cursor:pointer;
     }
 
-    /* Hostels columns */
+    /* Hostels container (no scrolling) */
     .hostels-container {
       display:flex; flex-wrap:wrap; gap:1rem;
     }
     .hostel-column {
       flex:1 1 300px;
-      border:1px solid #ddd;
-      border-radius:5px;
-      background:#fafafa;
-      padding:1rem;
+      border:1px solid #ddd; border-radius:5px;
+      background:#fafafa; padding:1rem;
       display:flex; flex-direction:column;
     }
     .hostel-column h3 { margin-top:0; }
-    .rooms-list { margin-top:1rem; }
+    .rooms-list {
+      margin-top:1rem; /* no overflow setting */
+    }
 
     /* Room cards */
     .room-card {
