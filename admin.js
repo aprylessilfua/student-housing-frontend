@@ -1,4 +1,5 @@
-const BACKEND_URL = 'https://student-housing-backend.onrender.com';
+const BACKEND_URL = 'https://student-hostel-backend-bd96.onrender.com';
+//const BACKEND_URL = 'https://student-housing-backend.onrender.com';
 
 // Admin Auth Link
 function setupAdminAuthLink() {
