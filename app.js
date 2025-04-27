@@ -11,10 +11,32 @@ function closeModal(id) {
 }
 
 function setupLogout() {
-  const link = document.getElementById('logout-link');
-  if (link) {
-    link.onclick = () => {
-      localStorage.clear(); // Clears all stored data
+  const logoutLink = document.getElementById('logout-link');
+  const loginLink = document.getElementById('login-link');
+
+  // Check if the user is logged in
+  const studentToken = localStorage.getItem('studentToken');
+  const adminToken = localStorage.getItem('adminToken');
+
+  if (studentToken || adminToken) {
+    logoutLink.style.display = 'inline';
+    loginLink.style.display = 'none';
+  } else {
+    logoutLink.style.display = 'none';
+    loginLink.style.display = 'inline';
+  }
+
+  // Logout functionality
+  if (logoutLink) {
+    logoutLink.onclick = () => {
+      if (studentToken) {
+        localStorage.removeItem('studentToken');
+        localStorage.removeItem('studentUserId');
+      }
+      if (adminToken) {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminUserId');
+      }
       alert('You have been logged out.');
       window.location.href = 'login.html'; // Redirect to login page
     };
@@ -105,7 +127,7 @@ function renderIndex() {
   // Attach handlers
   document.querySelectorAll('.apply-room').forEach(btn => {
     btn.onclick = async () => {
-      const userId = Number(localStorage.getItem('userId'));
+      const userId = Number(localStorage.getItem('studentUserId'));
       if (!userId) {
         alert('Please log in to apply.');
         return window.location.href = 'login.html';
@@ -159,9 +181,9 @@ async function login(event) {
     }
 
     const { token } = await res.json();
-    localStorage.setItem('token', token);
+    localStorage.setItem('studentToken', token);
     const payload = JSON.parse(atob(token.split('.')[1]));
-    localStorage.setItem('userId', payload.id);
+    localStorage.setItem('studentUserId', payload.id);
     alert('Login successful.');
     window.location.href = 'dashboard.html';
   } catch (error) {
