@@ -24,22 +24,24 @@ async function fetchData() {
   }
 }
 
-// Render hostels each with nested rooms
-function renderHostels(filteredHostels, filteredRooms) {
+// Render hostels with nested rooms
+function renderHostels() {
   const container = document.getElementById('hostels-container');
   container.innerHTML = '';
 
-  if (!Array.isArray(filteredHostels) || filteredHostels.length === 0) {
+  if (!Array.isArray(allHostels) || allHostels.length === 0) {
     container.innerHTML = '<p>No hostels found.</p>';
     return;
   }
 
-  filteredHostels.forEach(h => {
+  allHostels.forEach(h => {
     const col = document.createElement('div');
     col.className = 'hostel-column';
 
-    // Filter rooms for this hostel
-    const rooms = filteredRooms.filter(r => r.hostel_id === h.id);
+    // Find rooms belonging to this hostel
+    const rooms = Array.isArray(allRooms)
+      ? allRooms.filter(r => r.hostel_id === h.id)
+      : [];
 
     // Build rooms HTML
     const roomsHTML = rooms.length
@@ -107,7 +109,7 @@ function attachRoomHandlers() {
   });
 }
 
-// Close modal on backdrop or button
+// Setup modal close & logout
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('modal-close').onclick = () => closeModal('image-modal');
   document.getElementById('image-modal').onclick = e => {
@@ -119,37 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 });
 
-// Filtering logic
-function applyFilters() {
-  const locQ = document.getElementById('search-location').value.trim().toLowerCase();
-  const amQ  = document.getElementById('search-amenities').value.trim().toLowerCase();
-  const maxP = Number(document.getElementById('search-max-price').value);
-  const maxO = Number(document.getElementById('search-max-occupancy').value);
-
-  const filteredHostels = allHostels.filter(h =>
-    (!locQ || (h.address||'').toLowerCase().includes(locQ)) &&
-    (!amQ  || (h.description||'').toLowerCase().includes(amQ))
-  );
-  const filteredRooms = allRooms.filter(r =>
-    (!maxP || r.price <= maxP) &&
-    (!maxO || r.occupancy_limit <= maxO) &&
-    (!amQ  || (r.description||'').toLowerCase().includes(amQ))
-  );
-
-  renderHostels(filteredHostels, filteredRooms);
-}
-
-// Clear filters
-function clearFilters() {
-  ['search-location','search-amenities','search-max-price','search-max-occupancy']
-    .forEach(id => document.getElementById(id).value = '');
-  renderHostels(allHostels, allRooms);
-}
-
 // Init on load
 window.addEventListener('DOMContentLoaded', async () => {
   await fetchData();
-  renderHostels(allHostels, allRooms);
-  document.getElementById('search-button').onclick      = applyFilters;
-  document.getElementById('clear-search-button').onclick = clearFilters;
+  renderHostels();
 });
