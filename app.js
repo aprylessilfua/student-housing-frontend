@@ -2,15 +2,15 @@
 
 const BACKEND_URL = 'https://student-housing-backend.onrender.com';
 
-// Modal show/hide
+// Modal helpers
 function openModal(id)  { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-// Data caches
+// Data stores
 let allHostels = [];
 let allRooms   = [];
 
-// Fetch hostels and rooms
+// Fetch hostels & rooms from API
 async function fetchData() {
   try {
     const [hRes, rRes] = await Promise.all([
@@ -29,14 +29,14 @@ function renderHostels() {
   const container = document.getElementById('hostels-container');
   container.innerHTML = '';
 
-  // Gather filter criteria
+  // Read filter inputs
   const locQ    = document.getElementById('search-location').value.trim().toLowerCase();
   const amQ     = document.getElementById('search-amenities').value.trim().toLowerCase();
   const minP    = Number(document.getElementById('search-min-price').value);
   const maxP    = Number(document.getElementById('search-max-price').value);
   const maxO    = Number(document.getElementById('search-max-occupancy').value);
 
-  // Pre-filter rooms by price, occupancy, amenities
+  // Pre-filter rooms
   const roomsFiltered = allRooms.filter(r => {
     const desc = (r.description||'').toLowerCase();
     return (
@@ -47,34 +47,31 @@ function renderHostels() {
     );
   });
 
-  // Pre-filter hostels by location & amenities, and only keep those with at least one room
+  // Filter and render each hostel
   allHostels.forEach(h => {
     const addr = (h.address||'').toLowerCase();
     const desc = (h.description||'').toLowerCase();
-    const matchesLocation = !locQ || addr.includes(locQ);
-    const matchesAmenity  = !amQ  || desc.includes(amQ);
-    if (!matchesLocation || !matchesAmenity) return;
+    if (locQ && !addr.includes(locQ)) return;
+    if (amQ  && !desc.includes(amQ)) return;
 
-    // rooms in this hostel
     const rooms = roomsFiltered.filter(r => r.hostel_id === h.id);
     const col = document.createElement('div');
     col.className = 'hostel-column';
 
-    // Build rooms HTML
     const roomsHTML = rooms.length
       ? rooms.map(r => `
-        <div class="room-card">
-          <h4>${r.name}</h4>
-          <p>${r.description}</p>
-          <p><strong>Price:</strong> $${r.price}</p>
-          <p><strong>Occupancy:</strong> ${r.occupancy_limit}</p>
-          <button class="apply-room" data-id="${r.id}">Apply</button>
-          ${r.photo_url
-            ? `<button class="view-image" data-src="${r.photo_url}">View</button>`
-            : ''
-          }
-        </div>
-      `).join('')
+          <div class="room-card">
+            <h4>${r.name}</h4>
+            <p>${r.description}</p>
+            <p><strong>Price:</strong> $${r.price}</p>
+            <p><strong>Occupancy:</strong> ${r.occupancy_limit}</p>
+            <button class="apply-room" data-id="${r.id}">Apply</button>
+            ${r.photo_url
+              ? `<button class="view-image" data-src="${r.photo_url}">View</button>`
+              : ''
+            }
+          </div>
+        `).join('')
       : '<p>No matching rooms.</p>';
 
     col.innerHTML = `
@@ -88,9 +85,8 @@ function renderHostels() {
   attachRoomHandlers();
 }
 
-// Bind Apply & View handlers
+// Attach Apply & View button handlers
 function attachRoomHandlers() {
-  // Apply
   document.querySelectorAll('.apply-room').forEach(btn => {
     btn.onclick = async () => {
       const userId = Number(localStorage.getItem('userId'));
@@ -101,11 +97,11 @@ function attachRoomHandlers() {
       try {
         const res = await fetch(`${BACKEND_URL}/api/applications`, {
           method: 'POST',
-          headers:{'Content-Type':'application/json'},
+          headers: {'Content-Type':'application/json'},
           body: JSON.stringify({
             user_id: userId,
             room_id: Number(btn.dataset.id),
-            status:  'Pending'
+            status: 'Pending'
           })
         });
         if (!res.ok) throw new Error('Apply failed');
@@ -117,7 +113,6 @@ function attachRoomHandlers() {
     };
   });
 
-  // View image
   document.querySelectorAll('.view-image').forEach(btn => {
     btn.onclick = () => {
       const src = btn.dataset.src;
@@ -128,7 +123,7 @@ function attachRoomHandlers() {
   });
 }
 
-// Initialize modal & logout
+// Setup modal close & logout on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('modal-close').onclick = () => closeModal('image-modal');
   document.getElementById('image-modal').onclick = e => {
@@ -140,11 +135,11 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 });
 
-// On load: fetch → render → bind filter buttons
+// Initialize on load
 window.addEventListener('DOMContentLoaded', async () => {
   await fetchData();
   renderHostels();
-  document.getElementById('search-button').onclick      = renderHostels;
+  document.getElementById('search-button').onclick = renderHostels;
   document.getElementById('clear-search-button').onclick = () => {
     ['search-location','search-amenities','search-min-price','search-max-price','search-max-occupancy']
       .forEach(id => document.getElementById(id).value = '');
