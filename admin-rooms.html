@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Admin — Rooms</title>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Manage Rooms</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -14,39 +13,37 @@
       <a href="admin-hostels.html">Hostels</a>
       <a href="admin-rooms.html" class="active">Rooms</a>
       <a href="admin-students.html">Students</a>
-      <a href="#" id="logout-link">Logout</a>
+      <a href="admin-applications.html">Applications</a>
+      <a href="admin-notifications.html">Notifications</a>
+      <a href="#" id="admin-auth-link"></a>
     </nav>
   </header>
+
   <main>
     <button id="create-room-button">+ New Room</button>
     <table>
       <thead>
-        <tr>
-          <th>ID</th><th>Name</th><th>Description</th><th>Price</th>
-          <th>Occupancy</th><th>Hostel</th><th>Photo</th><th>Actions</th>
-        </tr>
+        <tr><th>ID</th><th>Name</th><th>Description</th><th>Price</th><th>Limit</th><th>Hostel</th><th>Photo</th><th>Actions</th></tr>
       </thead>
       <tbody id="rooms-table-body"></tbody>
     </table>
 
-    <!-- Modal for Create/Edit Room -->
     <div id="room-form-modal" class="modal">
-      <form id="room-form" class="modal-form">
-        <input type="hidden" id="room-id"/>
-        <label>Name: <input type="text" id="room-name" required/></label>
-        <label>Description: <textarea id="room-description" required></textarea></label>
-        <label>Price: <input type="number" id="room-price" required/></label>
-        <label>Occupancy: <input type="number" id="room-occupancy" required/></label>
-        <label>Hostel ID: <input type="number" id="room-hostel-id" required/></label>
-        <label>Photo URL: <input type="url" id="room-photo" required/></label>
-        <div class="modal-actions">
-          <button type="submit">Save</button>
-          <button type="button" onclick="closeModal('room-form-modal')">Cancel</button>
-        </div>
+      <form id="room-form">
+        <input type="hidden" id="room-id">
+        <label>Name:<input id="room-name" required></label>
+        <label>Description:<textarea id="room-description" required></textarea></label>
+        <label>Price:<input type="number" id="room-price" required></label>
+        <label>Occupancy:<input type="number" id="room-occupancy" required></label>
+        <label>Hostel ID:<input type="number" id="room-hostel-id" required></label>
+        <label>Photo URL:<input id="room-photo"></label>
+        <button type="submit">Save</button>
+        <button id="room-form-cancel">Cancel</button>
       </form>
     </div>
   </main>
-  <footer><p>© 2025 Student Housing System</p></footer>
+
+  <footer>© 2025 Student Housing System</footer>
   <script src="admin.js" defer></script>
 </body>
 </html>
