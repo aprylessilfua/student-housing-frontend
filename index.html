@@ -1,13 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Student Housing</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="styles.css" />
   <style>
-    #search-form { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2rem; }
-    #search-form label { display:flex; flex-direction:column; }
+    /* Layout */
+    #search-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: flex-end;
+    }
+    #search-form label {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.9rem;
+    }
+    #search-form button {
+      height: 2.5rem;
+      padding: 0 1rem;
+    }
+    .container {
+      display: flex;
+      gap: 2rem;
+    }
+    .hostels-section, .rooms-section {
+      flex: 1;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 1rem;
+    }
+    .hostels-section { max-width: 45%; }
+    .rooms-section   { max-width: 45%; }
+    .card {
+      position: relative;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #fafafa;
+    }
+    .card img {
+      max-width: 100%;
+      border-radius: 5px;
+      margin-top: 0.5rem;
+    }
+    .card button.view-image {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.8rem;
+    }
+    /* Image Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.active { display: flex; }
+    .modal img {
+      max-width: 90%;
+      max-height: 90%;
+      border: 5px solid #fff;
+      border-radius: 5px;
+    }
+    .modal button#modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #fff;
+      border: none;
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+    }
   </style>
 </head>
 <body>
@@ -23,16 +100,51 @@
       <a href="admin.html">Admin Login</a>
     </nav>
   </header>
+
   <main>
     <form id="search-form">
-      <label>Search:<input type="text" id="search-input" placeholder="…"/></label>
-      <button type="button" id="search-button">Search</button>
+      <label>
+        Location
+        <input type="text" id="search-location" placeholder="e.g. Nairobi" />
+      </label>
+      <label>
+        Amenities
+        <input type="text" id="search-amenities" placeholder="e.g. WiFi, Pool" />
+      </label>
+      <label>
+        Max Price
+        <input type="number" id="search-max-price" placeholder="USD" />
+      </label>
+      <label>
+        Max Occupancy
+        <input type="number" id="search-max-occupancy" placeholder="#" />
+      </label>
+      <button type="button" id="search-button">Filter</button>
       <button type="button" id="clear-search-button">Clear</button>
     </form>
-    <section><h2>Available Hostels</h2><ul id="hostels-list"></ul></section>
-    <section><h2>Available Rooms</h2><ul id="rooms-list"></ul></section>
+
+    <div class="container">
+      <section class="hostels-section">
+        <h2>Available Hostels</h2>
+        <div id="hostels-list"></div>
+      </section>
+      <section class="rooms-section">
+        <h2>Available Rooms</h2>
+        <div id="rooms-list"></div>
+      </section>
+    </div>
   </main>
-  <footer><p>© 2025 Student Housing System</p></footer>
+
+  <!-- Image Preview Modal -->
+  <div id="image-modal" class="modal">
+    <img id="modal-image" src="" alt="Preview" />
+    <button id="modal-close">&times;</button>
+  </div>
+
+  <footer>
+    <p>© 2025 Student Housing System</p>
+  </footer>
+
   <script src="app.js" defer></script>
 </body>
 </html>
