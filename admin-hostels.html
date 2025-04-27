@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Admin — Hostels</title>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Manage Hostels</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -14,50 +13,36 @@
       <a href="admin-hostels.html" class="active">Hostels</a>
       <a href="admin-rooms.html">Rooms</a>
       <a href="admin-students.html">Students</a>
-      <a href="#" id="logout-link">Logout</a>
+      <a href="admin-applications.html">Applications</a>
+      <a href="admin-notifications.html">Notifications</a>
+      <a href="#" id="admin-auth-link"></a>
     </nav>
   </header>
 
   <main>
     <button id="create-hostel-button">+ New Hostel</button>
-
     <table>
       <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Address</th>
-          <th>Description</th>
-          <th>Occupancy</th>
-          <th>Rooms</th>
-          <th>Photo</th>
-          <th>Actions</th>
-        </tr>
+        <tr><th>ID</th><th>Name</th><th>Description</th><th>Limit</th><th>Photo</th><th>Actions</th></tr>
       </thead>
       <tbody id="hostels-table-body"></tbody>
     </table>
 
-    <!-- Modal for Create/Edit Hostel -->
+    <!-- Modal Form -->
     <div id="hostel-form-modal" class="modal">
-      <form id="hostel-form" class="modal-form">
-        <input type="hidden" id="hostel-id"/>
-        <label>Name: <input type="text" id="hostel-name" required/></label>
-        <label>Address: <input type="text" id="hostel-address" required/></label>
-        <label>Description: <textarea id="hostel-description" required></textarea></label>
-        <label>Occupancy Limit: <input type="number" id="hostel-occupancy" required/></label>
-        <label>Photo URL: <input type="url" id="hostel-photo"/></label>
-        <div class="modal-actions">
-          <button type="submit">Save</button>
-          <button type="button" onclick="closeModal('hostel-form-modal')">Cancel</button>
-        </div>
+      <form id="hostel-form">
+        <input type="hidden" id="hostel-id">
+        <label>Name:<input id="hostel-name" required></label>
+        <label>Description:<textarea id="hostel-description" required></textarea></label>
+        <label>Occupancy:<input type="number" id="hostel-occupancy" required></label>
+        <label>Photo URL:<input id="hostel-photo"></label>
+        <button type="submit">Save</button>
+        <button id="hostel-form-cancel">Cancel</button>
       </form>
     </div>
   </main>
 
-  <footer>
-    <p>© 2025 Student Housing System</p>
-  </footer>
-
+  <footer>© 2025 Student Housing System</footer>
   <script src="admin.js" defer></script>
 </body>
 </html>
