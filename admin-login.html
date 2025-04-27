@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Admin Login</h1>
+    <nav class="navbar">
+      <a href="admin-login.html" class="active">Login</a>
+    </nav>
+  </header>
+  <main>
+    <form id="admin-login-form">
+      <label>Email:<input type="email" id="admin-email" required></label>
+      <label>Password:<input type="password" id="admin-password" required></label>
+      <button type="submit">Login</button>
+    </form>
+  </main>
+  <footer>© 2025 Student Housing System</footer>
+  <script>
+    const BACKEND_URL = 'https://student-housing-backend.onrender.com';
+    document.getElementById('admin-login-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const email = document.getElementById('admin-email').value.trim();
+      const pwd   = document.getElementById('admin-password').value.trim();
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email, password: pwd })
+        });
+        if (!res.ok) throw new Error('Login failed');
+        const { token } = await res.json();
+        localStorage.setItem('adminToken', token);
+        window.location.href = 'admin.html';
+      } catch (err) {
+        alert('Admin login failed');
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
