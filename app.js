@@ -185,12 +185,16 @@ async function loadApplicationsPage() {
   try {
     const token = localStorage.getItem('token');
     const res = await fetch(`${BACKEND_URL}/api/dashboard`, {
-      headers:{ 'Authorization': `Bearer ${token}` }
+      headers: { 'Authorization': `Bearer ${token}` }
     });
-    const apps = (await res.json()).applications||[];
-    ul.innerHTML = apps.length
-      ? apps.map(a => `<li>Room ${a.room_id} — ${a.status}</li>`).join('')
+    const { applications = [] } = await res.json();
+
+    ul.innerHTML = applications.length
+      ? applications
+          .map(a => `<li>Room: ${a.room} — ${a.status}</li>`)
+          .join('')
       : '<li>No applications.</li>';
+
   } catch (e) {
     console.error('loadApplicationsPage error:', e);
     ul.innerHTML = '<li>Error loading.</li>';
