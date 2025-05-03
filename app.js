@@ -79,7 +79,7 @@ function renderIndex() {
         <div class="room-card">
           <h4>${r.name}</h4>
           <p>${r.description}</p>
-          <p><strong>Price:</strong> $${r.price}</p>
+          <p><strong>Price:</strong> GH₵${r.price}</p>
           <p><strong>Occupancy:</strong> ${r.occupancy_limit}</p>
           <button data-room-id="${r.id}">Apply</button>
           ${r.photo_url?`<button data-src="${r.photo_url}">View</button>`:``}
@@ -167,7 +167,7 @@ async function loadRoomsPage() {
           <li>
             <h3>${r.name}</h3>
             <p>${r.description}</p>
-            <p><strong>Price:</strong> $${r.price}</p>
+            <p><strong>Price:</strong> GH₵${r.price}</p>
             <p><strong>Occupancy:</strong> ${r.occupancy_limit}</p>
           </li>
         `).join('')
