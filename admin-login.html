@@ -1,47 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Admin Login</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <header>
-    <h1>Admin Login</h1>
-    <nav class="navbar">
-      <a href="admin-login.html" class="active">Login</a>
-    </nav>
-  </header>
-  <main>
+<body class="p-4">
+
+  <div class="container" style="max-width:400px;">
+    <h2 class="mb-4">Admin Login</h2>
     <form id="admin-login-form">
-      <label>Email:<input type="email" id="admin-email" required></label>
-      <label>Password:<input type="password" id="admin-password" required></label>
-      <button type="submit">Login</button>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input id="email" type="email" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input id="password" type="password" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Login</button>
     </form>
-  </main>
-  <footer>© 2025 Student Housing System</footer>
+  </div>
+
   <script>
+    // 1) Make sure this is your **live** Render backend URL
     const BACKEND_URL = 'https://student-housing-backend.onrender.com';
-    document.getElementById('admin-login-form').addEventListener('submit', async e => {
-      e.preventDefault();
-      const email = document.getElementById('admin-email').value.trim();
-      const pwd   = document.getElementById('admin-password').value.trim();
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ email, password: pwd })
-        });
-        if (!res.ok) throw new Error('Login failed');
-        const { token } = await res.json();
-        localStorage.setItem('adminToken', token);
-        window.location.href = 'admin.html';
-      } catch (err) {
-        alert('Admin login failed');
-        console.error(err);
-      }
-    });
+
+    document.getElementById('admin-login-form')
+      .addEventListener('submit', async e => {
+        e.preventDefault();
+
+        // 2) IDs exactly match the above inputs
+        const email    = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          if (!res.ok) {
+            // grab any error message from the backend, if present
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Login failed');
+          }
+
+          const { token } = await res.json();
+          // 3) Store under **exactly** the key your admin.js expects
+          localStorage.setItem('adminToken', token);
+          window.location.href = 'admin.html';
+
+        } catch (err) {
+          console.error('Admin login error:', err);
+          alert(`Admin login failed: ${err.message}`);
+        }
+      });
   </script>
+
 </body>
 </html>
