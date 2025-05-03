@@ -1,27 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Hostels</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Hostels | Student Housing</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
   <header>
     <h1>Hostels</h1>
     <nav class="navbar">
       <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
       <a href="hostels.html" class="active">Hostels</a>
       <a href="rooms.html">Rooms</a>
       <a href="applications.html">My Applications</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="#" id="auth-link"></a>
+      <a id="auth-link" href="login.html">Login</a>
     </nav>
   </header>
-  <main>
-    <ul id="hostels-list"></ul>
+
+  <main class="container">
+    <table class="hostels-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Address</th>
+          <th>Description</th>
+          <th>Occupancy</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="hostels-table-body">
+        <tr><td colspan="6">Loading hostels…</td></tr>
+      </tbody>
+    </table>
   </main>
+
+  <!-- Image Modal (reused for both rooms & hostels) -->
+  <div id="image-modal" class="modal">
+    <div class="modal-content">
+      <span id="modal-close" class="modal-close">&times;</span>
+      <img id="modal-image" src="" alt="Photo" />
+    </div>
+  </div>
+
   <footer>© 2025 Student Housing System</footer>
+
+  <!-- Must load config.js before app.js -->
+  <script src="config.js"></script>
   <script src="app.js" defer></script>
 </body>
 </html>
