@@ -1,27 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Rooms</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Rooms | Student Housing</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
   <header>
     <h1>Rooms</h1>
     <nav class="navbar">
       <a href="index.html">Home</a>
-      <a href="rooms.html" class="active">Rooms</a>
+      <a href="dashboard.html">Dashboard</a>
       <a href="hostels.html">Hostels</a>
       <a href="applications.html">My Applications</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="#" id="auth-link"></a>
+      <a href="rooms.html" class="active">Rooms</a>
+      <a id="auth-link" href="login.html">Login</a>
     </nav>
   </header>
-  <main>
-    <ul id="rooms-list"></ul>
+
+  <main class="container">
+    <table class="rooms-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Room Name</th>
+          <th>Description</th>
+          <th>Price (GHS)</th>
+          <th>Occupancy</th>
+          <th>Hostel</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="rooms-table-body">
+        <!-- JS will populate rows here -->
+        <tr><td colspan="7">Loading rooms…</td></tr>
+      </tbody>
+    </table>
   </main>
+
+  <!-- Image Modal -->
+  <div id="image-modal" class="modal">
+    <div class="modal-content">
+      <span id="modal-close" class="modal-close">&times;</span>
+      <img id="modal-image" src="" alt="Room photo" />
+    </div>
+  </div>
+
   <footer>© 2025 Student Housing System</footer>
+
+  <script src="config.js"></script>
   <script src="app.js" defer></script>
 </body>
 </html>
