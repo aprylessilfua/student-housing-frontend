@@ -249,11 +249,12 @@ async function loadApplicationsAdmin() {
   const tbody = document.getElementById('applications-table-body');
   if (!tbody) return console.error('No #applications-table-body');
   tbody.innerHTML = '';
+
   apps.forEach(a => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${a.id}</td>
-      <td>${a.user_id}</td>
+      <td>${a.username}</td>         <!-- now uses the joined name -->
       <td>${a.room_id}</td>
       <td>${a.status}</td>
       <td>${new Date(a.applied_at).toLocaleString()}</td>
@@ -263,6 +264,7 @@ async function loadApplicationsAdmin() {
       </td>`;
     tbody.appendChild(tr);
   });
+
   document.querySelectorAll('.approve-app').forEach(b =>
     b.addEventListener('click', () => updateApplication(b.dataset.id, 'Accepted'))
   );
