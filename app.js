@@ -1,4 +1,5 @@
 // app.js
+
 const BACKEND_URL = 'https://student-hostel-backend-bd96.onrender.com';
 
 // ─── Auth & Modal Helpers ───────────────────────────────────────────────────
@@ -20,7 +21,9 @@ function setupAuthLink() {
 
 function setupImageModal() {
   const modal = document.getElementById('image-modal');
-  document.getElementById('modal-close')?.addEventListener('click', () => modal.classList.remove('active'));
+  document.getElementById('modal-close')?.addEventListener('click', () =>
+    modal.classList.remove('active')
+  );
   modal?.addEventListener('click', e => {
     if (e.target === modal) modal.classList.remove('active');
   });
@@ -30,12 +33,16 @@ function setupImageModal() {
 let allHostels = [], allRooms = [];
 
 async function fetchAllData() {
-  const [hRes, rRes] = await Promise.all([
-    fetch(`${BACKEND_URL}/api/hostels`),
-    fetch(`${BACKEND_URL}/api/rooms`)
-  ]);
-  allHostels = await hRes.json();
-  allRooms   = await rRes.json();
+  try {
+    const [hRes, rRes] = await Promise.all([
+      fetch(`${BACKEND_URL}/api/hostels`),
+      fetch(`${BACKEND_URL}/api/rooms`)
+    ]);
+    allHostels = await hRes.json();
+    allRooms   = await rRes.json();
+  } catch (err) {
+    console.error('fetchAllData error:', err);
+  }
 }
 
 function renderIndex() {
@@ -49,11 +56,11 @@ function renderIndex() {
   const maxO = Number(document.getElementById('search-max-occupancy')?.value);
 
   const roomsFiltered = allRooms.filter(r => {
-    const d = (r.description||'').toLowerCase();
+    const desc = (r.description||'').toLowerCase();
     return (!minP || r.price >= minP)
         && (!maxP || r.price <= maxP)
         && (!maxO || r.occupancy_limit <= maxO)
-        && (!amQ  || d.includes(amQ));
+        && (!amQ  || desc.includes(amQ));
   });
 
   container.innerHTML = '';
@@ -109,7 +116,7 @@ function renderIndex() {
         if (!res.ok) throw new Error(res.statusText);
         alert('Application submitted!');
       } catch (e) {
-        console.error(e);
+        console.error('apply error:', e);
         alert('Failed to apply.');
       }
     };
@@ -142,7 +149,8 @@ async function loadHostelsPage() {
           </li>
         `).join('')
       : '<li>No hostels.</li>';
-  } catch {
+  } catch (e) {
+    console.error('loadHostelsPage error:', e);
     ul.innerHTML = '<li>Error loading.</li>';
   }
 }
@@ -164,7 +172,8 @@ async function loadRoomsPage() {
           </li>
         `).join('')
       : '<li>No rooms.</li>';
-  } catch {
+  } catch (e) {
+    console.error('loadRoomsPage error:', e);
     ul.innerHTML = '<li>Error loading.</li>';
   }
 }
@@ -182,7 +191,8 @@ async function loadApplicationsPage() {
     ul.innerHTML = apps.length
       ? apps.map(a => `<li>Room ${a.room_id} — ${a.status}</li>`).join('')
       : '<li>No applications.</li>';
-  } catch {
+  } catch (e) {
+    console.error('loadApplicationsPage error:', e);
     ul.innerHTML = '<li>Error loading.</li>';
   }
 }
@@ -195,25 +205,24 @@ async function loadDashboardPage() {
       headers:{ 'Authorization': `Bearer ${token}` }
     });
     const d = await res.json();
-    document.getElementById('student-name').textContent  = d.profile?.username||'N/A';
-    document.getElementById('student-email').textContent = d.profile?.email||'N/A';
-    document.getElementById('total-applications').textContent    = d.stats?.total   || 0;
-    document.getElementById('pending-applications').textContent  = d.stats?.pending || 0;
-    document.getElementById('accepted-applications').textContent = d.stats?.accepted|| 0;
-    document.getElementById('rejected-applications').textContent = d.stats?.rejected|| 0;
+    document.getElementById('student-name').textContent  = d.profile?.username || 'N/A';
+    document.getElementById('student-email').textContent = d.profile?.email    || 'N/A';
+    document.getElementById('total-applications').textContent    = d.stats?.total    || 0;
+    document.getElementById('pending-applications').textContent  = d.stats?.pending  || 0;
+    document.getElementById('accepted-applications').textContent = d.stats?.accepted || 0;
+    document.getElementById('rejected-applications').textContent = d.stats?.rejected || 0;
 
-    // Assigned rooms
     const ar = document.getElementById('assigned-rooms-list');
     ar.innerHTML = (d.assignedRooms||[]).length
       ? d.assignedRooms.map(rm => `<li>${rm.room} @ ${rm.hostel}</li>`).join('')
       : '<li>No rooms assigned.</li>';
 
-    // Notifications
     const nl = document.getElementById('notifications-list');
     nl.innerHTML = (d.notifications||[]).length
       ? d.notifications.map(n => `<li>[${new Date(n.created_at).toLocaleString()}] ${n.message}</li>`).join('')
       : '<li>No notifications.</li>';
-  } catch {
+  } catch (e) {
+    console.error('loadDashboardPage error:', e);
     alert('Failed to load dashboard.');
   }
 }
@@ -223,46 +232,60 @@ async function handleLogin(e) {
   e.preventDefault();
   const email = document.getElementById('email').value.trim();
   const pwd   = document.getElementById('password').value.trim();
-  if (!email||!pwd) return alert('Fill both fields');
+  if (!email || !pwd) {
+    return alert('Fill both fields');
+  }
   try {
     const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ email, password:pwd })
+      body: JSON.stringify({ email, password: pwd })
     });
     if (!res.ok) {
-      const err = await res.json(); throw new Error(err.error||res.statusText);
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || res.statusText);
     }
     const { token } = await res.json();
     localStorage.setItem('token', token);
-    localStorage.setItem('userId', JSON.parse(atob(token.split('.')[1])).id);
+    // decode JWT to get userId
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    localStorage.setItem('userId', payload.id);
     window.location = 'dashboard.html';
   } catch (e) {
+    console.error('Login error:', e);
     alert(`Login failed: ${e.message}`);
   }
 }
 
 async function handleRegister(e) {
   e.preventDefault();
-  const u = document.getElementById('name').value.trim();
-  const eM= document.getElementById('email').value.trim();
-  const p = document.getElementById('phone').value.trim();
-  const pw= document.getElementById('password').value.trim();
-  const cf= document.getElementById('confirm-password').value.trim();
-  if (!u||!eM||!p||!pw||!cf) return alert('All fields required');
-  if (pw !== cf) return alert('Passwords must match');
+  const name            = document.getElementById('name').value.trim();
+  const email           = document.getElementById('email').value.trim();
+  const phone           = document.getElementById('phone').value.trim();
+  const password        = document.getElementById('password').value.trim();
+  const confirmPassword = document.getElementById('confirm-password').value.trim();
+
+  if (!name || !email || !phone || !password || !confirmPassword) {
+    return alert('All fields required');
+  }
+  if (password !== confirmPassword) {
+    return alert('Passwords must match');
+  }
+
   try {
     const res = await fetch(`${BACKEND_URL}/api/users`, {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ username:u, email:eM, phone:p, password:pw })
+      body: JSON.stringify({ name, email, phone, password })
     });
     if (!res.ok) {
-      const err = await res.json(); throw new Error(err.error||res.statusText);
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || res.statusText);
     }
     alert('Registered! Please log in.');
     window.location = 'login.html';
   } catch (e) {
+    console.error('Register error:', e);
     alert(`Register failed: ${e.message}`);
   }
 }
@@ -274,22 +297,44 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   const page = (location.pathname.split('/').pop()||'index.html').toLowerCase();
   switch (page) {
-    case '':  
+    case '':
     case 'index.html':
       await fetchAllData();
       renderIndex();
-      document.getElementById('search-button')?.addEventListener('click', renderIndex);
-      document.getElementById('clear-search-button')?.addEventListener('click', () => {
-        ['search-location','search-amenities','search-min-price','search-max-price','search-max-occupancy']
-          .forEach(id => document.getElementById(id).value = '');
-        renderIndex();
-      });
+      document.getElementById('search-button')
+        ?.addEventListener('click', renderIndex);
+      document.getElementById('clear-search-button')
+        ?.addEventListener('click', () => {
+          ['search-location','search-amenities','search-min-price','search-max-price','search-max-occupancy']
+            .forEach(id => document.getElementById(id).value = '');
+          renderIndex();
+        });
       break;
-    case 'hostels.html':       loadHostelsPage();       break;
-    case 'rooms.html':         loadRoomsPage();         break;
-    case 'applications.html':  loadApplicationsPage();  break;
-    case 'dashboard.html':     loadDashboardPage();     break;
-    case 'login.html':         document.getElementById('login-form')?.addEventListener('submit', handleLogin); break;
-    case 'register.html':      document.getElementById('register-form')?.addEventListener('submit', handleRegister); break;
+
+    case 'hostels.html':
+      loadHostelsPage();
+      break;
+
+    case 'rooms.html':
+      loadRoomsPage();
+      break;
+
+    case 'applications.html':
+      loadApplicationsPage();
+      break;
+
+    case 'dashboard.html':
+      loadDashboardPage();
+      break;
+
+    case 'login.html':
+      document.getElementById('login-form')
+        ?.addEventListener('submit', handleLogin);
+      break;
+
+    case 'register.html':
+      document.getElementById('register-form')
+        ?.addEventListener('submit', handleRegister);
+      break;
   }
 });
