@@ -133,25 +133,49 @@ function renderIndex() {
 
 // ─── SIMPLE LOADERS FOR OTHER STUDENT PAGES ─────────────────────────────────
 async function loadHostelsPage() {
-  const ul = document.getElementById('hostels-list');
-  if (!ul) return;
-  ul.innerHTML = '<li>Loading…</li>';
+  const tbody = document.getElementById('hostels-table-body');
+  if (!tbody) return;
+
+  // show loading placeholder
+  tbody.innerHTML = '<tr><td colspan="6">Loading hostels…</td></tr>';
+
   try {
-    const res = await fetch(`${BACKEND_URL}/api/hostels`);
-    const data = await res.json();
-    ul.innerHTML = Array.isArray(data) && data.length
-      ? data.map(h => `
-          <li>
-            <h3>${h.name}</h3>
-            <p>${h.description}</p>
-            <p><strong>Occupancy:</strong> ${h.occupancy_limit}</p>
-            ${h.photo_url?`<img src="${h.photo_url}" style="max-width:150px">`:``}
-          </li>
-        `).join('')
-      : '<li>No hostels.</li>';
-  } catch (e) {
-    console.error('loadHostelsPage error:', e);
-    ul.innerHTML = '<li>Error loading.</li>';
+    const res     = await fetch(`${BACKEND_URL}/api/hostels`);
+    const hostels = await res.json();
+
+    if (!Array.isArray(hostels) || hostels.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6">No hostels available.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = hostels.map(h => `
+      <tr>
+        <td>${h.id}</td>
+        <td>${h.name}</td>
+        <td>${h.address || '—'}</td>
+        <td>${h.description}</td>
+        <td>${h.occupancy_limit}</td>
+        <td>
+          <button class="btn-view" data-src="${h.photo_url || ''}">
+            View
+          </button>
+        </td>
+      </tr>
+    `).join('');
+
+    // Wire up the View buttons
+    document.querySelectorAll('.btn-view').forEach(btn =>
+      btn.addEventListener('click', () => {
+        const src = btn.dataset.src;
+        if (!src) return alert('No image available');
+        document.getElementById('modal-image').src = src;
+        document.getElementById('image-modal').classList.add('active');
+      })
+    );
+
+  } catch (err) {
+    console.error('loadHostelsPage error:', err);
+    tbody.innerHTML = '<tr><td colspan="6">Error loading hostels.</td></tr>';
   }
 }
 
