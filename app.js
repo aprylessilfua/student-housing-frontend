@@ -156,27 +156,101 @@ async function loadHostelsPage() {
 }
 
 async function loadRoomsPage() {
-  const ul = document.getElementById('rooms-list');
-  if (!ul) return;
-  ul.innerHTML = '<li>Loading…</li>';
+  const tbody = document.getElementById('rooms-table-body');
+  if (!tbody) return;
+
+  // show loading placeholder
+  tbody.innerHTML = '<tr><td colspan="7">Loading rooms…</td></tr>';
+
   try {
-    const res = await fetch(`${BACKEND_URL}/api/rooms`);
-    const data = await res.json();
-    ul.innerHTML = Array.isArray(data) && data.length
-      ? data.map(r => `
-          <li>
-            <h3>${r.name}</h3>
-            <p>${r.description}</p>
-            <p><strong>Price:</strong> GH₵${r.price}</p>
-            <p><strong>Occupancy:</strong> ${r.occupancy_limit}</p>
-          </li>
-        `).join('')
-      : '<li>No rooms.</li>';
-  } catch (e) {
-    console.error('loadRoomsPage error:', e);
-    ul.innerHTML = '<li>Error loading.</li>';
+    // fetch rooms and hostels (to map IDs → names)
+    const [roomsRes, hostelsRes] = await Promise.all([
+      fetch(`${BACKEND_URL}/api/rooms`),
+      fetch(`${BACKEND_URL}/api/hostels`)
+    ]);
+    const rooms   = await roomsRes.json();
+    const hostels = await hostelsRes.json();
+
+    // build a lookup: hostel_id → hostel.name
+    const hostelMap = hostels.reduce((m, h) => {
+      m[h.id] = h.name;
+      return m;
+    }, {});
+
+    // format prices in GHS
+    const ghFormatter = new Intl.NumberFormat('en-GH', {
+      style: 'currency',
+      currency: 'GHS',
+      minimumFractionDigits: 2
+    });
+
+    // render rows
+    if (!Array.isArray(rooms) || rooms.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7">No rooms available.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = rooms.map(r => {
+      const priceFmt = ghFormatter.format(r.price);
+      const hostelName = hostelMap[r.hostel_id] || 'Unknown';
+      return `
+        <tr>
+          <td>${r.id}</td>
+          <td>${r.name}</td>
+          <td>${r.description}</td>
+          <td>${priceFmt}</td>
+          <td>${r.occupancy_limit}</td>
+          <td>${hostelName}</td>
+          <td>
+            <button class="btn-view" data-src="${r.photo_url || ''}">View</button>
+            <button class="btn-apply" data-room-id="${r.id}">Apply</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    // wire up the buttons
+    document.querySelectorAll('.btn-view').forEach(btn =>
+      btn.addEventListener('click', () => {
+        const src = btn.dataset.src;
+        if (!src) return alert('No image available');
+        document.getElementById('modal-image').src = src;
+        document.getElementById('image-modal').classList.add('active');
+      })
+    );
+
+    document.querySelectorAll('.btn-apply').forEach(btn =>
+      btn.addEventListener('click', async () => {
+        const uid = Number(localStorage.getItem('userId'));
+        if (!uid) {
+          alert('Please log in first.');
+          return window.location.href = 'login.html';
+        }
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/applications`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_id: uid,
+              room_id: btn.dataset.roomId,
+              status:  'Pending'
+            })
+          });
+          if (!res.ok) throw new Error(res.statusText);
+          alert('Application submitted!');
+        } catch (err) {
+          console.error('apply error:', err);
+          alert('Failed to apply. Please try again.');
+        }
+      })
+    );
+
+  } catch (err) {
+    console.error('loadRoomsPage error:', err);
+    tbody.innerHTML = '<tr><td colspan="7">Error loading rooms.</td></tr>';
   }
 }
+
 
 async function loadApplicationsPage() {
   const ul = document.getElementById('applications-list');
