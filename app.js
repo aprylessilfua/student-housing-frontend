@@ -209,7 +209,7 @@ async function loadDashboardPage() {
       headers:{ 'Authorization': `Bearer ${token}` }
     });
     const d = await res.json();
-    document.getElementById('student-name').textContent  = d.profile?.username || 'N/A';
+    document.getElementById('student-name').textContent  = d.profile?.name || 'N/A';
     document.getElementById('student-email').textContent = d.profile?.email    || 'N/A';
     document.getElementById('total-applications').textContent    = d.stats?.total    || 0;
     document.getElementById('pending-applications').textContent  = d.stats?.pending  || 0;
